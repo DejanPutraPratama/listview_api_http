@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:listview_api_http/controller/get_data.dart';
 import 'package:listview_api_http/model/model.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:listview_api_http/utils/custom_colors.dart';
 import 'package:listview_api_http/utils/custom_widgets.dart';
 import 'package:listview_api_http/utils/functions.dart';
 
@@ -16,39 +14,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final CustomColors _customColors = CustomColors();
   final CustomWidgets _customWidgets = CustomWidgets();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: _customColors.green,
-        surfaceTintColor: Colors.grey,
-        shadowColor: _customColors.green,
-        title: Text(
-          "Daftar Produk",
-          style: GoogleFonts.getFont('Roboto',
-              textStyle: const TextStyle(fontWeight: FontWeight.bold)),
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
-            child: TextField(
-              decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: const Icon(Icons.close),
-                  hintText: 'Cari barang...',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20))),
-            ),
-          ),
-        ),
-      ),
+      appBar: _customWidgets.appbarOne(),
       body: FutureBuilder<List<Post>>(
         future: fetchPost(), // Menyesuaikan dengan tipe data baru
         builder: (context, snapshot) {
@@ -68,21 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   index -= 1;
                   if (index == -1) {
-                    return Container(
-                      margin: EdgeInsets.only(bottom: 15),
-                      child: Stack(
-                        children: [
-                          Image.asset('assets/images/home.png'),
-                          // Positioned(
-                          //   top: 10,
-                          //   left: 50,
-                          //   child: Text(
-                          //     "Waktu Kita Belanja",
-                          //   ),
-                          // )
-                        ],
-                      ),
-                    );
+                    return _customWidgets.banner('assets/images/home.png');
                   }
                   final post = posts[index];
                   bool validUrl = Functions().isValidUrl(post.images[0]);
