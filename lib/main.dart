@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:listview_api_http/utils/custom_colors.dart';
 import 'package:listview_api_http/view/detail_screen.dart';
 
 import 'package:listview_api_http/view/home_screen.dart';
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Produk Unggulan',
       theme: ThemeData(
-        colorSchemeSeed: Colors.greenAccent,
+        brightness: Brightness.dark,
+        colorSchemeSeed: CustomColors().green,
       ),
       routes: {
         '/home': (context) => const HomeScreen(),

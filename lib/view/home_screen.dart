@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:listview_api_http/controller/get_data.dart';
 import 'package:listview_api_http/model/model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:listview_api_http/utils/custom_colors.dart';
+import 'package:listview_api_http/utils/custom_widgets.dart';
+import 'package:listview_api_http/utils/functions.dart';
 
 // Home Screen with FutureBuilder
 class HomeScreen extends StatefulWidget {
@@ -12,15 +16,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final CustomColors _customColors = CustomColors();
+  final CustomWidgets _customWidgets = CustomWidgets();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.greenAccent,
+        foregroundColor: _customColors.green,
+        surfaceTintColor: Colors.grey,
+        shadowColor: _customColors.green,
         title: Text(
           "Daftar Produk",
           style: GoogleFonts.getFont('Roboto',
               textStyle: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
+            child: TextField(
+              decoration: InputDecoration(
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: const Icon(Icons.close),
+                  hintText: 'Cari barang...',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20))),
+            ),
+          ),
         ),
       ),
       body: FutureBuilder<List<Post>>(
@@ -38,27 +64,48 @@ class _HomeScreenState extends State<HomeScreen> {
           } else {
             final posts = snapshot.data!; // Daftar produk
             return ListView.builder(
-                itemCount: posts.length,
+                itemCount: posts.length + 1,
                 itemBuilder: (context, index) {
+                  index -= 1;
+                  if (index == -1) {
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 15),
+                      child: Stack(
+                        children: [
+                          Image.asset('assets/images/home.png'),
+                          // Positioned(
+                          //   top: 10,
+                          //   left: 50,
+                          //   child: Text(
+                          //     "Waktu Kita Belanja",
+                          //   ),
+                          // )
+                        ],
+                      ),
+                    );
+                  }
                   final post = posts[index];
-                  return ListTile(
-                    leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Image.network(post.image)),
-                    title: Text(post.title,
-                        style: GoogleFonts.getFont('Roboto',
-                            textStyle:
-                                const TextStyle(fontWeight: FontWeight.w500))),
-                    subtitle: Text('Price: ${post.price}',
-                        style: GoogleFonts.getFont('Roboto',
-                            textStyle:
-                                const TextStyle(fontWeight: FontWeight.w300))),
-                    splashColor: Colors.greenAccent,
-                    onTap: () {
-                      Navigator.pushNamed(context, '/detail',
-                          arguments: posts[index]);
-                    },
-                  );
+                  bool validUrl = Functions().isValidUrl(post.images[0]);
+                  if (!validUrl) {
+                    return _customWidgets.productTile(
+                      Container(
+                        color: const Color.fromRGBO(100, 100, 100, 1),
+                        width: 55,
+                        height: 55,
+                        child: const Icon(
+                          Icons.broken_image,
+                        ),
+                      ),
+                      post,
+                      context,
+                    );
+                  } else {
+                    return _customWidgets.productTile(
+                      Image.network(post.images[0]),
+                      post,
+                      context,
+                    );
+                  }
                 });
           }
         },
